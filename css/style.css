@@ -1,0 +1,168 @@
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+
+body {
+  line-height: 1;
+}
+
+ol, ul {
+  list-style: none;
+}
+
+blockquote, q {
+  quotes: none;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.content {
+  height: 100vh;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  background-color: #6368cf;
+}
+
+.bee {
+  position: relative;
+  width: 800px;
+  height: 800px;
+  background-color: #fff;
+}
+
+.bee li {
+  position: absolute;
+  border-radius: 50%;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  width: 0.5%;
+  height: 0.5%;
+  background-color: #555;
+}
+
+.bee li::before {
+  position: absolute;
+  -webkit-transform: translateY(calc(-100% - 5px)) translateX(-50%);
+          transform: translateY(calc(-100% - 5px)) translateX(-50%);
+  font-size: 12px;
+  white-space: nowrap;
+  color: #999;
+}
+
+.bee .NectarSource li {
+  background-color: #fca042;
+  z-index: 1;
+  width: 2.5%;
+  height: 2.5%;
+}
+
+.bee .EmployedBee li {
+  background-color: #75bc37;
+  z-index: 2;
+  width: 1.5%;
+  height: 1.5%;
+}
+
+.bee .OnLooker li {
+  background-color: #1778f2;
+  z-index: 3;
+  width: 0.5%;
+  height: 0.5%;
+}
+
+.bee .DelectSource li {
+  background-color: #ccc;
+  z-index: 3;
+  width: 0.5%;
+  height: 0.5%;
+}
+
+.bee .BestSource li {
+  background-color: #ef4431;
+  z-index: 10;
+}
+
+.bee .BestSource li::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid #ef4431;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+}
+
+.bee .test li {
+  width: 15px;
+  height: 15px;
+  z-index: 10;
+}
+
+.bee .re li {
+  background-color: green;
+}
+
+.container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.controler {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  background-color: #fdc83b;
+  padding: 15px;
+}
+/*# sourceMappingURL=style.css.map */
