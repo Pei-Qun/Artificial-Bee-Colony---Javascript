@@ -20,11 +20,8 @@ initilize = function() {
     OnLooker[i] = { code: [] }
     for (let j=0; j<D; j++) {
       NectarSource[i].code[j] = random(lb,ub);
-      // EmployedBee[i].code[j] = NectarSource[i].code[j];
       EmployedBee[i].code[j] = random(lb,ub);
-      // OnLooker[i].code[j] = NectarSource[i].code[j];
       OnLooker[i].code[j] = random(lb,ub);
-      // BestSource.code[j] = NectarSource[0].code[j];
       BestSource.code[j] = random(lb,ub);
     }
     /**** 蜜源的初始化 ****/
@@ -50,11 +47,21 @@ initilize = function() {
   BestSource.fitness = NectarSource[0].fitness;
   BestSource.rfitness = NectarSource[0].rfitness;
   BestSource.trail = NectarSource[0].trail;
-  // console.log(NectarSource, EmployedBee, OnLooker, BestSource);
-  ui();
+  // ui
+  iterations = 0;
+  iterationEl.innerText = iterations;
 }
 
 let calculationTruefit_truefit = 0;
+let calculationFitness_fitnessResult = 0;
+let i,k,j,t;
+let param2change;               // 需要改變的維數
+let Rij;                        // [-1, 1] 之间的隨機數
+let maxfit;       // 計算輪盤的選擇概率
+let R_choosed;    // 被選中的概率
+let maxtrialindex;    // 最高 trail 的蜜源
+let R;                // [0,1] 之間的隨機數
+
 // 計算真實收益度的函數值
 calculationTruefit = function(bee)
 {
@@ -76,11 +83,9 @@ calculationTruefit = function(bee)
     )
   );
 
-  // console.log("calculationTruefit: ", calculationTruefit_truefit)
   return floatNumber(calculationTruefit_truefit);
 }
 
-let calculationFitness_fitnessResult = 0;
 // 計算適應值
 calculationFitness = function(truefit)
 {
@@ -93,9 +98,6 @@ calculationFitness = function(truefit)
   return floatNumber(calculationFitness_fitnessResult);
 }
 
-let i,k,j,t;
-let param2change;               // 需要改變的維數
-let Rij;                        // [-1, 1] 之间的隨機數
 // 修改工蜂的函式
 sendEmployedBees = function() {
   for (i = 0; i < FoodNumber; i++) {
@@ -145,7 +147,6 @@ sendEmployedBees = function() {
   }
 }
 
-let maxfit;
 // 計算輪盤的選擇概率
 CalculateProbabilities = function() {
   maxfit = NectarSource[0].fitness;
@@ -161,7 +162,6 @@ CalculateProbabilities = function() {
   }
 }
 
-let R_choosed;    // 被選中的概率
 // 工蜂與觀察蜂交流資料，觀察蜂更改資料
 sendOnlookerBees = function() {
   i = 0;
@@ -180,8 +180,7 @@ sendOnlookerBees = function() {
         if (k != i) { break }
       }
  
-      for( j=0; j<D; j++) {
-        // 交換訊息
+      for( j=0; j<D; j++) {   // 交換訊息
         OnLooker[i].code[j] = NectarSource[i].code[j];
       }
       
@@ -192,7 +191,6 @@ sendOnlookerBees = function() {
         NectarSource[i].code[param2change] + 
         Rij/100 * ( NectarSource[i].code[param2change] - NectarSource[k].code[param2change] )
       );
-      // console.log(OnLooker[i]);
       
       /*******判斷是否越界*******/
       if (OnLooker[i].code[param2change] < lb) {
@@ -224,9 +222,6 @@ sendOnlookerBees = function() {
   }
 }
 
-
-let maxtrialindex;
-let R;    // [0,1] 之間的隨機數
 /******* 出動偵查蜂 **********/
 // 判斷是否有偵查蜂的出现，有則重新生成蜜源
 sendScoutBees = function() {
@@ -264,55 +259,139 @@ MemorizeBestSource = function() {
 }
 
 function run() {
+  if(iterations >= maxCycle) {
+    alert('已達停止條件')
+    return false
+  };
   sendEmployedBees();
   CalculateProbabilities();
   sendOnlookerBees();
   MemorizeBestSource();
   sendScoutBees();
   MemorizeBestSource();
+  chartData.push({
+    index: iterations,
+    trueFit: BestSource.trueFit
+  })
+  iterations += 1;
   ui();
   console.log(BestSource.trueFit);
 }
 
+/******** 以下為畫面處理 ********/
 function cl() {
-  console.log(NectarSource, EmployedBee, OnLooker, BestSource);
+  console.log("NectarSource", NectarSource);
+  console.log("EmployedBee", EmployedBee);
+  console.log("OnLooker", OnLooker);
+  console.log("BestSource", BestSource);
 }
 
 function ui() {
-  let transVal = (val) => {
-    return `${(val + 100) / 2}%`
-    // return `${val / 2}%`
+  NectarSource.forEach((item, index) => itemAddOnce(NectarSource_sprite, item, index));
+  EmployedBee.forEach((item, index) => itemAddOnce(EmployedBee_sprite, item, index));
+  OnLooker.forEach((item, index) => itemAddOnce(OnLooker_sprite, item, index));
+  BestSource.code.forEach((item, index) => BestSourceAddOnce(index));
+  iterationEl.innerText = iterations;
+  resultEl.innerText = BestSource.trueFit;
+}
+
+/******** Canvas ********/
+const el = document.querySelector('.canvas');
+const iterationEl = document.getElementById("iteration");
+const resultEl = document.getElementById("result");
+const NectarSource_sprite = [];
+const EmployedBee_sprite = [];
+const OnLooker_sprite = [];
+let BestSource_sprite = [];
+
+const app = new PIXI.Application({
+  view: document.getElementById('main'),
+  width: el.clientWidth,
+  height: el.clientHeight,
+  backgroundColor: 0xF6F6F6,
+});
+// container
+const container = new PIXI.Container();
+app.stage.addChild(container);
+// loader
+const loader = new PIXI.Loader();
+function loaderCanvas() {
+  loader
+    .add('NectarSource','img/NectarSource.png')
+    .add('BestSource','img/BestSource.png')
+    .add('EmployedBee','img/EmployedBee.png')
+    .add('OnLooker','img/OnLooker.png')
+    .load((loader, resource)=> setup(resource))
+}
+function transVal(val, xy = 100) {
+  return (val + 100) / 2 / 100 * xy
+}
+function setup(resource) {
+  function build(sprite, item, index, rc) {
+    sprite[index] = new PIXI.Sprite(resource[rc].texture)
+    sprite[index].x = transVal(item.code[0], el.clientWidth);
+    sprite[index].y = transVal(item.code[1], el.clientHeight);
+    container.addChild(sprite[index]);
   }
-  NectarSource.forEach((item, index) => {
-    $('.NectarSource').append(`<li class="style${index}"></li>`)
-    $(`.NectarSource li.style${index}`)
-      .attr('trueFit', item.trueFit)
-      .attr('code', `[${item.code[0]}, ${item.code[1]}]`)
-      .css("left", transVal(item.code[0])).css("top", transVal(item.code[1]))
-  });
-  EmployedBee.forEach((item, index) => {
-    $('.EmployedBee').append(`<li class="style${index}"></li>`)
-    $(`.EmployedBee li.style${index}`)
-      .attr('trueFit', item.trueFit)
-      .attr('code', `[${item.code[0]}, ${item.code[1]}]`)
-      .css("left", transVal(item.code[0])).css("top", transVal(item.code[1]))
-  });
-  OnLooker.forEach((item, index) => {
-    $('.OnLooker').append(`<li class="style${index}"></li>`)
-    $(`.OnLooker li.style${index}`)
-      .attr('trueFit', item.trueFit)
-      .attr('code', `[${item.code[0]}, ${item.code[1]}]`)
-      .css("left", transVal(item.code[0])).css("top", transVal(item.code[1]))
-  });
-  $('.BestSource li').css("left", transVal(BestSource.code[0])).css("top", transVal(BestSource.code[1]))
+  NectarSource.forEach((item, index) => build(NectarSource_sprite, item, index, "NectarSource"));
+  EmployedBee.forEach((item, index) => build(EmployedBee_sprite, item, index, "EmployedBee"));
+  OnLooker.forEach((item, index) => build(OnLooker_sprite, item, index, "OnLooker"));
+  BestSource_sprite = new PIXI.Sprite(resource.BestSource.texture);
+  BestSource_sprite.x = transVal(BestSource.code[0], el.clientWidth);
+  BestSource_sprite.y = transVal(BestSource.code[1], el.clientHeight);
+  container.addChild(BestSource_sprite);
+}
+function itemAddOnce(sprite, item, index) {
+  app.ticker.addOnce((delta) => {
+    sprite[index].x = transVal(item.code[0], el.clientWidth);
+    sprite[index].y = transVal(item.code[1], el.clientHeight);
+  })
+}
+function BestSourceAddOnce(index) {
+  app.ticker.addOnce((delta) => {
+    BestSource_sprite.x = transVal(BestSource.code[0], el.clientWidth);
+    BestSource_sprite.y = transVal(BestSource.code[1], el.clientHeight);
+  })
 }
 
 /*******主函式*******/
-$( document ).ready(function() {
-  initilize();//初始化
+function initilizeBtn() {
+  if(
+    document.getElementById("NP").value < 1
+    || document.getElementById("limit").value < 1
+    || document.getElementById("maxCycle").value < 1
+  ){
+    alert('填入數值請勿小於 1')
+    return false;
+  }
+  NP = document.getElementById("NP").value;
+  FoodNumber = NP/2;
+  limit = document.getElementById("limit").value;
+  maxCycle = document.getElementById("maxCycle").value;
+  initilize(); //初始化
   MemorizeBestSource(); //保存最好的蜜源
+  loaderCanvas();
+  document.getElementById("NP").disabled = true;
+  document.getElementById("limit").disabled = true;
+  document.getElementById("maxCycle").disabled = true;
+  document.getElementById("initilize").disabled = true;
+  document.querySelector(".run").style.display = "block"
+}
 
-  // for(let i=0;i<=100;i++){
-  //   run();
-  // }
-});
+const ctx = document.getElementById('myChart').getContext('2d');
+function buildChart() {
+  document.querySelector(".chart-area").style.display = "flex";
+  const chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: chartData.map(x=>x.index),
+      datasets: [{
+        label: 'trueFit',
+        data: chartData.map(x=>x.trueFit),
+      }]
+    },
+    options: {
+      responsive: false
+    }
+  });
+}
