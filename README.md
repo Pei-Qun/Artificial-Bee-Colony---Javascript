@@ -34,7 +34,7 @@
 | code | 函數的維數 |
 | trueFit | 紀錄真實的收益度 |
 | fitness | 適應值 |
-| rfitness | 相對適應值比例 |
+| rfitness | 輪盤的選擇概率 |
 | trail | 表示實驗的次數 |
 
 ### Functions
@@ -59,3 +59,8 @@
 4. 當任一蜜源 (`NectarSource[i`) 的表示實驗的次數 (`NectarSource[i].trail`) 大於限度 `limit`，則放棄此蜜源，並出動一隻偵查蜂尋找一個新的蜜源
 5. 記憶到目前為止收益度最高的蜜源 (`MemorizeBestSource()`)
 6. 循環到符合終止條件
+
+### 參考資料
+- https://www.pixijs.com/
+- https://www.chartjs.org/
+- https://blog.csdn.net/wangqing008/article/details/11849255
