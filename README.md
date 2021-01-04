@@ -45,7 +45,6 @@
 | `calculationTruefit()` | 計算真實收益度的函數值 |
 | `calculationFitness()` | 計算適應值 |
 | `CalculateProbabilities()` | 計算輪盤的選擇概率 |
-| `newPosition()` | 定義工蜂位置 |
 | `sendEmployedBees()` | 修改工蜂的函式 |
 | `sendOnlookerBees()` | 工蜂與觀察蜂交流資料，觀察蜂更改資料 |
 | `sendScoutBees()` | 判斷是否有偵查蜂的出现，有則重新生成蜜源 |

@@ -52,8 +52,15 @@ table {
   border-spacing: 0;
 }
 
+body, html {
+  height: 100%;
+}
+
 .content {
-  height: 100vh;
+  height: 100%;
+  padding: 50px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -66,11 +73,34 @@ table {
   background-color: #6368cf;
 }
 
+.content .container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  height: 100%;
+  max-height: 800px;
+}
+
+.content .controler {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  background-color: #fdc83b;
+  padding: 15px;
+}
+
 .bee {
   position: relative;
-  width: 800px;
-  height: 800px;
+  height: 100%;
   background-color: #fff;
+}
+
+.bee .background {
+  height: 100%;
 }
 
 .bee li {
@@ -123,19 +153,8 @@ table {
 .bee .BestSource li {
   background-color: #ef4431;
   z-index: 10;
-}
-
-.bee .BestSource li::after {
-  content: '';
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  border: 1px solid #ef4431;
-  left: 50%;
-  top: 50%;
-  -webkit-transform: translate(-50%, -50%);
-          transform: translate(-50%, -50%);
+  width: 2%;
+  height: 2%;
 }
 
 .bee .test li {
@@ -146,23 +165,5 @@ table {
 
 .bee .re li {
   background-color: green;
-}
-
-.container {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-}
-
-.controler {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-  background-color: #fdc83b;
-  padding: 15px;
 }
 /*# sourceMappingURL=style.css.map */

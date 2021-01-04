@@ -1,21 +1,23 @@
 /***** 函式的實現 ****/
 
+let random, floatNumber, initilize, calculationTruefit, calculationFitness, sendEmployedBees, CalculateProbabilities, sendOnlookerBees, sendScoutBees, MemorizeBestSource;
+
 //隨機產生區間內的隨機數值
-function random(min, max) {
+random = function(min, max) {
   // max（不包括）
   return Math.floor(Math.random() * (max - min)) + min;
+}
 
-  // max（包括）
-  // return Math.floor(Math.random() * (max - min + 1)) + min;
+floatNumber = function(val, idx = 8) {
+  return Number(val.toFixed(idx));
 }
 
 // 初始化參數
-function initilize() {
+initilize = function() {
   for (let i=0 ; i<FoodNumber ; i++) {
     NectarSource[i] = { code: [] }
     EmployedBee[i] = { code: [] }
     OnLooker[i] = { code: [] }
-    // BestSource[i] = { code: [] }  //好像不需要先註解
     for (let j=0; j<D; j++) {
       NectarSource[i].code[j] = random(lb,ub);
       // EmployedBee[i].code[j] = NectarSource[i].code[j];
@@ -52,13 +54,14 @@ function initilize() {
   ui();
 }
 
+let calculationTruefit_truefit = 0;
 // 計算真實收益度的函數值
-function calculationTruefit(bee)
+calculationTruefit = function(bee)
 {
-  let truefit = 0;
+  calculationTruefit_truefit = 0;
   
   /****** 測試函數1 ******/
-  truefit = 0.5 + 
+  calculationTruefit_truefit = 0.5 + 
   (
     Math.sin(
       Math.sqrt(bee.code[0] * bee.code[0] + bee.code[1] * bee.code[1])
@@ -73,77 +76,29 @@ function calculationTruefit(bee)
     )
   );
 
-  // console.log("calculationTruefit: ", truefit)
-  return truefit;
+  // console.log("calculationTruefit: ", calculationTruefit_truefit)
+  return floatNumber(calculationTruefit_truefit);
 }
 
+let calculationFitness_fitnessResult = 0;
 // 計算適應值
-function calculationFitness(truefit)
+calculationFitness = function(truefit)
 {
-  let fitnessResult = 0;
+  calculationFitness_fitnessResult = 0;
   if (truefit >= 0) {
-    fitnessResult = 1 / (truefit + 1);
+    calculationFitness_fitnessResult = 1 / (truefit + 1);
   } else {
-    fitnessResult= 1 + Math.abs(truefit);
+    calculationFitness_fitnessResult= 1 + Math.abs(truefit);
   }
-  return fitnessResult;
+  return floatNumber(calculationFitness_fitnessResult);
 }
 
-let result22;
-/****** 二維三角 ******/
-function newPosition(i, k) {
-  // 取得 -1 的點
-  let newK = []
-  for(let xy=0; xy<=1; xy++) {
-    if(EmployedBee[k].code[xy] > EmployedBee[i].code[xy]) {
-      newK[xy] = EmployedBee[k].code[xy] + Math.abs(EmployedBee[i].code[xy] - EmployedBee[k].code[xy])
-    } else {
-      newK[xy] = EmployedBee[k].code[xy] - Math.abs(EmployedBee[i].code[xy] - EmployedBee[k].code[xy])
-    }
-  }
-
-  // A-C, B-c 長度
-  let length = [
-    Math.abs(EmployedBee[i].code[0] - newK[1]),
-    Math.abs(EmployedBee[i].code[1] - newK[0]),
-  ]
-
-  // A-B 長度
-  let h = Math.sqrt( (length[0] * length[0]) + (length[1] * length[1]) );
-
-  // 隨機段落
-  let percentage = random(0, 100)/100;
-
-  // A-B 之間隨機點的長度
-  let m = percentage*h
-
-  // 結果
-  let result = [
-    (h-m)/h*EmployedBee[i].code[0]+m/h*EmployedBee[k].code[0],
-    (h-m)/h*EmployedBee[i].code[1]+m/h*EmployedBee[k].code[1],
-  ]
-  // result22 = {
-  //   result: newK,
-  //   A: EmployedBee[i].code,
-  //   B: EmployedBee[k].code
-  // }
-  // let transVal = (val) => {
-  //   // return `${(val + 100) / 2}%`
-  //   return `${val}pt`
-  // }
-  EmployedBee[i].code[0] = result[0]
-  EmployedBee[i].code[1] = result[1]
-  // $('.test .A .x').css("left", transVal(result22.A[0])).css("top", transVal(result22.A[1]))
-  // $('.test .B .x').css("left", transVal(result22.B[0])).css("top", transVal(result22.B[1]))
-  // $('.test .re .x').css("left", transVal(result22.result[0])).css("top", transVal(result22.result[1]))
-}
-
+let i,k,j,t;
+let param2change;               // 需要改變的維數
+let Rij;                        // [-1, 1] 之间的隨機數
 // 修改工蜂的函式
-function sendEmployedBees() {
-  let k;
-  let param2change;               // 需要改變的維數
-  let Rij;                        // [-1, 1] 之间的隨機數
-  for (let i = 0; i < FoodNumber; i++) {
+sendEmployedBees = function() {
+  for (i = 0; i < FoodNumber; i++) {
     param2change = random(0, D);  //隨機選取需要改變的維數
  
     /****** 選取不等於 i 的 k ********/
@@ -152,18 +107,18 @@ function sendEmployedBees() {
       if (k != i) { break };
     }
  
-    // for (let j = 0; j < D; j++) {
-    //   // 第 i 隻埰蜜蜂的 code = 蜜源 code
-    //   EmployedBee[i].code[j] = NectarSource[i].code[j];
-    // }
+    for (j = 0; j < D; j++) {
+      // 第 i 隻埰蜜蜂的 code = 蜜源 code
+      EmployedBee[i].code[j] = NectarSource[i].code[j];
+    }
  
     /******* 工蜂去更新資料 *******/
-    // Rij = random(-1, 1);
-    // EmployedBee[i].code[param2change] = 
-    //   NectarSource[i].code[param2change] + 
-    //   Rij * ( NectarSource[i].code[param2change] - NectarSource[k].code[param2change] );
-    newPosition(i, k)
-    // console.log(i, Rij, NectarSource[i].code[param2change] - NectarSource[k].code[param2change])
+    Rij = random(-100, 100);
+    EmployedBee[i].code[param2change] = 
+    floatNumber(
+      NectarSource[i].code[param2change] + 
+      Rij/100 * ( NectarSource[i].code[param2change] - NectarSource[k].code[param2change] )
+    );
     
     /******* 判斷是否越界 ********/
     if (EmployedBee[i].code[param2change] > ub) {
@@ -178,40 +133,37 @@ function sendEmployedBees() {
     /****** 貪婪選擇策略 *******/
     if (EmployedBee[i].trueFit < NectarSource[i].trueFit) {
       // 如果這隻工蜂的 trueFit < 蜜源 trueFit，蜜源的內容改為這隻工蜂的內容
-      for (let j=0; j<D; j++) {
+      for (j=0; j<D; j++) {
         NectarSource[i].code[j] = EmployedBee[i].code[j];
       }
       NectarSource[i].trail = 0;
       NectarSource[i].trueFit = EmployedBee[i].trueFit;
       NectarSource[i].fitness = EmployedBee[i].fitness;
-      // console.log(i, NectarSource[i]);
     } else {
       NectarSource[i].trail++;
     }
   }
 }
 
+let maxfit;
 // 計算輪盤的選擇概率
-function CalculateProbabilities() {
-  let maxfit = NectarSource[0].fitness;
+CalculateProbabilities = function() {
+  maxfit = NectarSource[0].fitness;
   // 查詢最大的適應值並儲存於 maxfit 中
-  for (let i=1; i<FoodNumber; i++) {
+  for (i=1; i<FoodNumber; i++) {
     if (NectarSource[i].fitness > maxfit){
       maxfit = NectarSource[i].fitness;
     }
   }
   // 計算相對適應值比例
-  for (let i=0; i<FoodNumber; i++) {
+  for (i=0; i<FoodNumber; i++) {
     NectarSource[i].rfitness = ( 0.9 * (NectarSource[i].fitness/maxfit) ) + 0.1;
   }
 }
 
+let R_choosed;    // 被選中的概率
 // 工蜂與觀察蜂交流資料，觀察蜂更改資料
-function sendOnlookerBees() {
-  let i,j,t,k;
-  let R_choosed;    // 被選中的概率
-  let param2change; // 需要被改變的維數
-  let Rij;          // [-1,1] 之間的隨機數
+sendOnlookerBees = function() {
   i = 0;
   t = 0;
   while(t < FoodNumber)
@@ -234,10 +186,12 @@ function sendOnlookerBees() {
       }
       
       /****更新觀察蜂資料******/
-      Rij = random(-1, 1);
+      Rij = random(-100, 100);
       OnLooker[i].code[param2change] = 
+      floatNumber(
         NectarSource[i].code[param2change] + 
-        Rij * ( NectarSource[i].code[param2change] - NectarSource[k].code[param2change] );
+        Rij/100 * ( NectarSource[i].code[param2change] - NectarSource[k].code[param2change] )
+      );
       // console.log(OnLooker[i]);
       
       /*******判斷是否越界*******/
@@ -270,11 +224,12 @@ function sendOnlookerBees() {
   }
 }
 
-/******* 只有一隻偵查蜂 **********/
+
+let maxtrialindex;
+let R;    // [0,1] 之間的隨機數
+/******* 出動偵查蜂 **********/
 // 判斷是否有偵查蜂的出现，有則重新生成蜜源
-function sendScoutBees() {
-	let maxtrialindex, i, j;
-	let R;    // [0,1] 之間的隨機數
+sendScoutBees = function() {
   maxtrialindex = 0;
   // 尋找有最高 trail 的蜜源
 	for (i=1; i<FoodNumber; i++) {
@@ -294,26 +249,18 @@ function sendScoutBees() {
 	}
 }
 
-//尋找最優蜜源
-function MemorizeBestSource() {
-  let j;
-  let indexOfMax = 0;
-  let tempMax = NectarSource[0];
-	for (let i=0; i<NectarSource.length; i++)
+// 保存最優蜜源
+MemorizeBestSource = function() {
+	// let i,j;
+	for (i=1; i<FoodNumber; i++)
 	{
-    if(NectarSource[i] > tempMax){
-      tempMax = a[i];
-      indexOfMax = i;
-    }
-		// if (NectarSource[i].trueFit<BestSource.trueFit) {
-		// 	for (j=0; j<D; j++) {
-    //     BestSource.code[j]=NectarSource[i].code[j];
-		// 	}
-    //   BestSource.trueFit=NectarSource[i].trueFit;
-		// }
+		if (NectarSource[i].trueFit<BestSource.trueFit) {
+			for (j=0; j<D; j++) {
+        BestSource.code[j]=NectarSource[i].code[j];
+			}
+      BestSource.trueFit=NectarSource[i].trueFit;
+		}
   }
-  BestSource = NectarSource[indexOfMax]
-  ui();
 }
 
 function run() {
@@ -324,6 +271,7 @@ function run() {
   sendScoutBees();
   MemorizeBestSource();
   ui();
+  console.log(BestSource.trueFit);
 }
 
 function cl() {
@@ -363,5 +311,8 @@ function ui() {
 $( document ).ready(function() {
   initilize();//初始化
   MemorizeBestSource(); //保存最好的蜜源
-  run();
+
+  // for(let i=0;i<=100;i++){
+  //   run();
+  // }
 });

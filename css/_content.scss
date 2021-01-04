@@ -1,15 +1,33 @@
+body, html {
+  height: 100%;
+}
 .content{
-  height: 100vh;
+  height: 100%;
+  padding: 50px;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: #6368cf;
+  .container{
+    display: flex;
+    height: 100%;
+    max-height: 800px;
+  }
+  .controler{
+    display: flex;
+    flex-direction: column;
+    background-color: #fdc83b;
+    padding: 15px;
+  }
 }
 .bee{
   position: relative;
-  width: 800px;
-  height: 800px;
+  height: 100%;
   background-color: #fff;
+  .background{
+    height: 100%;
+  }
   li{
     position: absolute;
     border-radius: 50%;
@@ -53,17 +71,8 @@
   .BestSource li{
     background-color: #ef4431;
     z-index: 10;
-    &::after{
-      content: '';
-      position: absolute;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      border: 1px solid #ef4431;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-    }
+    width: 2%;
+    height: 2%;
   }
   .test li{
     width: 15px;
@@ -73,14 +82,4 @@
   .re li{
     background-color: green;
   }
-}
-
-.container{
-  display: flex;
-}
-.controler{
-  display: flex;
-  flex-direction: column;
-  background-color: #fdc83b;
-  padding: 15px;
 }
